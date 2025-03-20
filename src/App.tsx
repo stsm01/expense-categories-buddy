@@ -12,6 +12,7 @@ import Expenses from "./pages/Expenses";
 import NewExpense from "./pages/NewExpense";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/expenses" element={<Expenses />} />

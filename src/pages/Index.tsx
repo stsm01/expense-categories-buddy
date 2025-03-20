@@ -1,9 +1,8 @@
-
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/context/UserContext';
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronRight, ExternalLink } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -64,6 +63,13 @@ const Index = () => {
         </div>
         
         <div className="container mx-auto px-4 sm:px-6 relative z-10 animate-fade-in">
+          <div className="flex justify-end mb-6">
+            <Link to="/landing">
+              <Button variant="ghost" className="gap-2">
+                View Landing Page <ExternalLink className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-slide-in">
               Welcome to RefundMate
