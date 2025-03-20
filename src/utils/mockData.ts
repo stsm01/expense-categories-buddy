@@ -89,7 +89,7 @@ const mockComments: Record<string, Comment[]> = {
       userId: 'usr_001',
       userName: 'Alex Morgan',
       userRole: 'employee',
-      message: 'I've attached the receipt from the online course. Please let me know if you need any additional information.',
+      message: "I've attached the receipt from the online course. Please let me know if you need any additional information.",
       timestamp: new Date('2023-05-18T14:30:00')
     },
     {
@@ -97,7 +97,7 @@ const mockComments: Record<string, Comment[]> = {
       userId: 'usr_002',
       userName: 'Jamie Chen',
       userRole: 'hr',
-      message: 'Could you provide the certificate of completion as well? It's required for our records.',
+      message: "Could you provide the certificate of completion as well? It's required for our records.",
       timestamp: new Date('2023-05-19T09:15:00')
     },
     {
@@ -105,7 +105,7 @@ const mockComments: Record<string, Comment[]> = {
       userId: 'usr_001',
       userName: 'Alex Morgan',
       userRole: 'employee',
-      message: 'Certainly! I've just uploaded the completion certificate to the expense report.',
+      message: "Certainly! I've just uploaded the completion certificate to the expense report.",
       timestamp: new Date('2023-05-19T11:45:00')
     }
   ],
@@ -115,7 +115,7 @@ const mockComments: Record<string, Comment[]> = {
       userId: 'usr_004',
       userName: 'Sam Johnson',
       userRole: 'employee',
-      message: 'This monitor was necessary as my previous one stopped working.',
+      message: "This monitor was necessary as my previous one stopped working.",
       timestamp: new Date('2023-06-10T15:20:00')
     },
     {
@@ -123,7 +123,7 @@ const mockComments: Record<string, Comment[]> = {
       userId: 'usr_002',
       userName: 'Jamie Chen',
       userRole: 'hr',
-      message: 'Thanks for the information. Was your previous monitor company-issued or personal?',
+      message: "Thanks for the information. Was your previous monitor company-issued or personal?",
       timestamp: new Date('2023-06-11T10:05:00')
     }
   ]
