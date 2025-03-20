@@ -99,9 +99,11 @@ const Expenses = () => {
           </div>
           
           {isEmployee && (
-            <Button className="mt-4 md:mt-0" onClick={() => setShowNewExpenseDialog(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Expense
+            <Button className="mt-4 md:mt-0" asChild>
+              <Link to="/expenses/new">
+                <Plus className="h-4 w-4 mr-2" />
+                New Expense
+              </Link>
             </Button>
           )}
         </div>

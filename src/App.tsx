@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Categories from "./pages/Categories";
 import Expenses from "./pages/Expenses";
+import NewExpense from "./pages/NewExpense";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/expenses" element={<Expenses />} />
+            <Route path="/expenses/new" element={<NewExpense />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
