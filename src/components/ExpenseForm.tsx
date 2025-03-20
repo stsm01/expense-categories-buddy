@@ -35,6 +35,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSubmit }) => {
   const [description, setDescription] = useState(expense?.description || '');
   const [categoryId, setCategoryId] = useState(expense?.categoryId || '');
   const [receipt, setReceipt] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [receiptUrl, setReceiptUrl] = useState<string | undefined>(expense?.receiptUrl);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     expense?.categoryId 
       ? mockCategories.find(cat => cat.id === expense.categoryId) || null
@@ -67,6 +69,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSubmit }) => {
   const handleReceiptChange = (file: File | null) => {
     setReceipt(file);
     setErrors({ ...errors, receipt: '' });
+    
+    // Generate a local URL for the uploaded file to preview
+    if (file) {
+      const localUrl = URL.createObjectURL(file);
+      setReceiptUrl(localUrl);
+      console.log('Receipt file selected:', file.name);
+    } else {
+      setReceiptUrl(expense?.receiptUrl);
+    }
   };
   
   const validateForm = (): boolean => {
@@ -74,65 +85,99 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSubmit }) => {
       amount: !amount ? 'Amount is required' : '',
       description: !description ? 'Description is required' : '',
       categoryId: !categoryId ? 'Category is required' : '',
-      receipt: !receipt && !expense?.receiptUrl ? 'Receipt is required' : '',
+      receipt: !receipt && !receiptUrl ? 'Receipt is required' : '',
     };
     
     setErrors(newErrors);
     return !Object.values(newErrors).some(error => error);
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const processExpenseData = () => {
+    // In a real app, you would upload the file to a server here
+    // and get back a URL to store in the database
+    // For this demo, we'll just use a placeholder URL if we have a file
+    const receiptUrlToUse = receipt ? '/placeholder.svg' : receiptUrl;
+    
+    return {
+      ...expense,
+      amount: parseFloat(amount),
+      description,
+      categoryId,
+      employeeId: currentUser?.id,
+      receiptUrl: receiptUrlToUse,
+    };
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
+    setIsSubmitting(true);
     
-    const expenseData: Partial<Expense> = {
-      ...expense,
-      amount: parseFloat(amount),
-      description,
-      categoryId,
-      employeeId: currentUser?.id,
-      status: expense?.status || 'draft',
-    };
-    
-    if (onSubmit) {
-      onSubmit(expenseData);
-    } else {
-      // Simulate form submission
-      toast({
-        title: expense ? "Expense updated" : "Expense created",
-        description: expense 
-          ? "Your expense has been updated successfully."
-          : "Your expense has been saved as a draft.",
-      });
+    try {
+      const expenseData = processExpenseData();
+      expenseData.status = expense?.status || 'draft';
       
-      navigate('/expenses');
+      if (onSubmit) {
+        onSubmit(expenseData);
+      } else {
+        // Simulate form submission
+        // In a real app, this would be an API call
+        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+        
+        toast({
+          title: expense ? "Expense updated" : "Expense created",
+          description: expense 
+            ? "Your expense has been updated successfully."
+            : "Your expense has been saved as a draft.",
+        });
+        
+        navigate('/expenses');
+      }
+    } catch (error) {
+      console.error('Error submitting expense:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your expense. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
-  const handleSaveAndSubmit = () => {
+  const handleSaveAndSubmit = async () => {
     if (!validateForm()) return;
+    setIsSubmitting(true);
     
-    const expenseData: Partial<Expense> = {
-      ...expense,
-      amount: parseFloat(amount),
-      description,
-      categoryId,
-      employeeId: currentUser?.id,
-      status: 'submitted',
-      submittedDate: new Date(),
-    };
-    
-    if (onSubmit) {
-      onSubmit(expenseData);
-    } else {
-      // Simulate form submission
-      toast({
-        title: "Expense submitted",
-        description: "Your expense has been submitted for approval.",
-      });
+    try {
+      const expenseData = processExpenseData();
+      expenseData.status = 'submitted';
+      expenseData.submittedDate = new Date();
       
-      navigate('/expenses');
+      if (onSubmit) {
+        onSubmit(expenseData);
+      } else {
+        // Simulate form submission
+        // In a real app, this would be an API call
+        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+        
+        toast({
+          title: "Expense submitted",
+          description: "Your expense has been submitted for approval.",
+        });
+        
+        navigate('/expenses');
+      }
+    } catch (error) {
+      console.error('Error submitting expense:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your expense. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
@@ -215,7 +260,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSubmit }) => {
             <FileUpload
               onFileChange={handleReceiptChange}
               accept="image/*,.pdf"
-              existingUrl={expense?.receiptUrl}
+              existingUrl={receiptUrl}
               className="min-h-[240px] flex items-center justify-center"
             />
             {errors.receipt && <p className="text-sm text-destructive">{errors.receipt}</p>}
@@ -229,10 +274,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ expense, onSubmit }) => {
         </Button>
         
         <div className="space-x-2">
-          <Button type="submit" variant="outline">
+          <Button type="submit" variant="outline" disabled={isSubmitting}>
             Save as Draft
           </Button>
-          <Button type="button" onClick={handleSaveAndSubmit}>
+          <Button 
+            type="button" 
+            onClick={handleSaveAndSubmit} 
+            disabled={isSubmitting}
+          >
             <PlusCircle className="h-4 w-4 mr-2" />
             {expense?.status === 'draft' ? 'Submit for Approval' : 'Save & Submit'}
           </Button>
