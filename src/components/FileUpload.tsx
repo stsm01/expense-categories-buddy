@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, X, FileText, Check, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -23,6 +23,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [preview, setPreview] = useState<string | null>(existingUrl || null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleFileChange = (selectedFile: File | null) => {
     setError(null);
@@ -83,6 +84,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
     setFile(null);
     setPreview(null);
     onFileChange(null);
+    
+    // Reset file input value
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
+  const handleButtonClick = () => {
+    // Programmatically click the file input
+    fileInputRef.current?.click();
   };
   
   const isImage = file?.type.startsWith('image/') || (preview && existingUrl);
@@ -111,22 +122,22 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   : accept.split(',').join(' or ')} (Max {maxSize}MB)
               </p>
             </div>
-            <label>
-              <input
-                type="file"
-                className="sr-only"
-                accept={accept}
-                onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
-              />
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
-                className="mt-2"
-              >
-                Select file
-              </Button>
-            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              accept={accept}
+              onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
+            />
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              className="mt-2"
+              onClick={handleButtonClick}
+            >
+              Select file
+            </Button>
           </div>
         </div>
       ) : (
